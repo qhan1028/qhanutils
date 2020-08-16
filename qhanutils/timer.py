@@ -5,10 +5,13 @@
     Last update: 2019.7.25
 """
 
-from __future__ import print_function
 import numpy as np
 import texttable as tt
 import time
+
+from .logger import get_logger
+
+logger = get_logger("timer")
 
 
 class TimeLabel():
@@ -58,8 +61,11 @@ class Timer():
             'us': 10 ** (-6),
             'ms': 10 ** (-3),
             's': 10 ** (0),
+            'm': 60,
             'min': 60,
+            'h': 60 * 60,
             'hr': 60 * 60,
+            'd': 60 * 60 * 24,
             'day': 60 * 60 * 24
         }
         self.set_unit(unit)
@@ -98,7 +104,7 @@ class Timer():
             return period / self.base
 
         except (TypeError, KeyError) as e:
-            print('[Error] start time not set.')
+            logger.error('start time not set.')
         
         return None
 
@@ -107,21 +113,21 @@ class Timer():
             self.labels[name] = TimeLabel(name)
             
         else:
-            print('[Error] label already existed.')
+            logger.error('label already existed.')
 
     def reset_label(self, name):
         if name in self.labels:
             self.labels[name].reset()
         
         else:
-            print('[Error] label not exists.')
+            logger.error('label not exists.')
 
     def remove_label(self, name):
         if name in self.labels:
             self.labels.pop(name, None)
             
         else:
-            print('[Error] label not exists.')
+            logger.error('label not exists.')
             
     def set_unit(self, unit):
         if unit in self.units:
@@ -129,8 +135,8 @@ class Timer():
             self.base = self.units[unit]
         
         else:
-            print('[Error] unit not exists:', unit)
-            print('[Timer] unit set to second.')
+            logger.error('unit not exists:', unit)
+            logger.info('unit set to second.')
             self.unit = 's'
             self.base = self.units[self.unit]
     
@@ -139,7 +145,7 @@ class Timer():
         data = []
         for name in self.labels:
             d = self.labels[name]
-            data.append([name, d.max / b, d.min / b, d.avg / b])
+            data.append([name, d.min / b, d.max / b, d.avg / b])
             
         return data
     
@@ -152,4 +158,4 @@ class Timer():
         table.set_cols_dtype(['t', 'f', 'f', 'f'])
         table.add_rows(header + data)
         
-        print(table.draw() + '\n(%s)' % self.unit)
+        logger.info('Summary:\n' + table.draw() + '\n(%s)' % self.unit)
