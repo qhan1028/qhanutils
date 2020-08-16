@@ -1,0 +1,8 @@
+CHANGES
+=======
+
+* add test script
+* fix bugs: timer summary
+* add readme
+* add package configs
+* add timer, logger
