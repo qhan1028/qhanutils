@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+* add license
+
+v0.0.1
+------
+
+* add author, changelog
 * add test script
 * fix bugs: timer summary
 * add readme
